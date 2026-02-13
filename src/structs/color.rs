@@ -170,6 +170,7 @@ static COLOR_STR_TO_INDEX: phf::Map<&'static str, u32> = phf_map! {
     "FF333333" => 63u32, // Standard Colour #56
 };
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Default, Debug, Clone, PartialEq, PartialOrd)]
 pub struct Color {
     indexed:     Option<u32>,
