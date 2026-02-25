@@ -115,23 +115,23 @@ impl PrintSettings {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                match e.name().0 {
-                b"c:headerFooter" => {
+                match e.name().local_name().into_inner() {
+                b"headerFooter" => {
                     HeaderFooter::set_attributes(reader, e);
                 }
-                b"c:pageSetup" => {
+                b"pageSetup" => {
                     PageSetup::set_attributes(reader, e);
                 }
                 _ => (),
                 }
             },
             Event::Empty(ref e) => {
-                if e.name().0 == b"c:pageMargins" {
+                if e.name().local_name().into_inner() == b"pageMargins" {
                     self.page_margins.set_attributes(reader, e);
                 }
             },
             Event::End(ref e) => {
-                if e.name().0 == b"c:printSettings" {
+                if e.name().local_name().into_inner() == b"printSettings" {
                     return;
                 }
             },

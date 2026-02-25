@@ -22,12 +22,12 @@ pub(crate) fn read(worksheet: &mut Worksheet, drawing_file: &RawFile) {
     xml_read_loop!(
         reader,
         Event::Empty(ref e) => {
-            if e.name().into_inner() == b"author" {
+            if e.name().local_name().into_inner() == b"author" {
                 authors.push(String::new());
             }
         },
         Event::Start(ref e) => {
-            if e.name().into_inner() ==  b"comment" {
+            if e.name().local_name().into_inner() ==  b"comment" {
                 let mut obj = Comment::default();
                 obj.set_attributes(&mut reader, e, &authors);
                 worksheet.add_comments(obj);
@@ -37,7 +37,7 @@ pub(crate) fn read(worksheet: &mut Worksheet, drawing_file: &RawFile) {
             value = e.unescape().unwrap().to_string();
         },
         Event::End(ref e) => {
-            if e.name().into_inner() == b"author" {
+            if e.name().local_name().into_inner() == b"author" {
                 authors.push(value.clone());
             }
         },

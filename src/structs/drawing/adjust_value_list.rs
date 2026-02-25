@@ -71,7 +71,7 @@ impl AdjustValueList {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"a:gd" {
+                if e.name().local_name().into_inner() == b"gd" {
                     let mut shape_guide = ShapeGuide::default();
                     shape_guide.set_name(get_attribute(e, b"name").unwrap());
                     shape_guide.set_fmla(get_attribute(e, b"fmla").unwrap());
@@ -79,7 +79,7 @@ impl AdjustValueList {
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:avLst" {
+                if e.name().local_name().into_inner() == b"avLst" {
                     return;
                 }
             },

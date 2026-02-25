@@ -501,7 +501,7 @@ impl Color {
         empty_flg: bool,
     ) {
         for attr in e.attributes().with_checks(false).flatten() {
-            match attr.key.0 {
+            match attr.key.local_name().into_inner() {
                 b"indexed" => {
                     if let Ok(v) = get_attribute_value(&attr) {
                         if let Ok(num) = v.parse() {
@@ -539,7 +539,7 @@ impl Color {
         let mut buf = Vec::new();
         loop {
             match reader.read_event_into(&mut buf) {
-                Ok(Event::End(ref e)) => match e.name().into_inner() {
+                Ok(Event::End(ref e)) => match e.name().local_name().into_inner() {
                     b"color" | b"fgColor" | b"bgColor" | b"tabColor" => return,
                     _ => (),
                 },

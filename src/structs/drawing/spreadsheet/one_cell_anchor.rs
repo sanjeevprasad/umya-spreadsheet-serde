@@ -221,26 +221,26 @@ impl OneCellAnchor {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                    b"xdr:from" => {
+                match e.name().local_name().into_inner() {
+                    b"from" => {
                         self.from_marker.set_attributes(reader, e);
                     }
-                    b"xdr:grpSp" => {
+                    b"grpSp" => {
                         let mut obj = GroupShape::default();
                         obj.set_attributes(reader, e, drawing_relationships);
                         self.set_group_shape(obj);
                     }
-                    b"xdr:graphicFrame" => {
+                    b"graphicFrame" => {
                         let mut obj = GraphicFrame::default();
                         obj.set_attributes(reader, e, drawing_relationships);
                         self.set_graphic_frame(obj);
                     }
-                    b"xdr:sp" => {
+                    b"sp" => {
                         let mut obj = Shape::default();
                         obj.set_attributes(reader, e, drawing_relationships);
                         self.set_shape(obj);
                     }
-                    b"xdr:pic" => {
+                    b"pic" => {
                         let mut obj = Picture::default();
                         obj.set_attributes(reader, e, drawing_relationships);
                         self.set_picture(obj);
@@ -249,12 +249,12 @@ impl OneCellAnchor {
                 }
             },
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"xdr:ext" {
+                if e.name().local_name().into_inner() == b"ext" {
                     self.extent.set_attributes(reader, e);
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"xdr:oneCellAnchor" {
+                if e.name().local_name().into_inner() == b"oneCellAnchor" {
                     return
                 }
             },

@@ -100,7 +100,7 @@ impl SourceRectangle {
         e: &BytesStart,
     ) {
         for attr in e.attributes().with_checks(false).flatten() {
-            match attr.key.0 {
+            match attr.key.local_name().into_inner() {
                 b"t" => self.set_t(get_attribute_value(&attr).unwrap()),
                 b"l" => self.set_l(get_attribute_value(&attr).unwrap()),
                 b"r" => self.set_r(get_attribute_value(&attr).unwrap()),

@@ -109,7 +109,7 @@ impl ReferenceSequence {
                     value = e.unescape().unwrap().to_string();
                 }
                 Ok(Event::End(ref e)) => {
-                    if e.name().into_inner() == b"xm:sqref" {
+                    if e.name().local_name().into_inner() == b"xm:sqref" {
                         self.set_sqref(value);
                         return;
                     }

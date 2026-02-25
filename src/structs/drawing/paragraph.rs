@@ -123,16 +123,16 @@ impl Paragraph {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                    b"a:pPr" => {
+                match e.name().local_name().into_inner() {
+                    b"pPr" => {
                         self.paragraph_properties.set_attributes(reader, e, false);
                     }
-                    b"a:r" => {
+                    b"r" => {
                         let mut run = Run::default();
                         run.set_attributes(reader, e);
                         self.add_run(run);
                     }
-                    b"a:endParaRPr" => {
+                    b"endParaRPr" => {
                         let mut run_properties = RunProperties::default();
                         run_properties.set_attributes(reader, e, false);
                         self.set_end_para_run_properties(run_properties);
@@ -141,11 +141,11 @@ impl Paragraph {
                 }
             },
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
-                    b"a:pPr" => {
+                match e.name().local_name().into_inner() {
+                    b"pPr" => {
                         self.paragraph_properties.set_attributes(reader, e, true);
                     }
-                    b"a:endParaRPr" => {
+                    b"endParaRPr" => {
                         let mut run_properties = RunProperties::default();
                         run_properties.set_attributes(reader, e, true);
                         self.set_end_para_run_properties(run_properties);
@@ -154,7 +154,7 @@ impl Paragraph {
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:p" {
+                if e.name().local_name().into_inner() == b"p" {
                     return;
                 }
             },

@@ -30,7 +30,7 @@ pub(crate) fn read(
     xml_read_loop!(
         reader,
             Event::Start(ref e) => {
-                if e.name().into_inner() == b"v:shape" {
+                if e.name().local_name().into_inner() == b"shape" {
                     let mut obj = Shape::default();
                     obj.set_attributes(&mut reader, e, drawing_relationships);
                     if obj.client_data().comment_column_target().is_some() {

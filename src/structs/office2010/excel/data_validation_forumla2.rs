@@ -66,7 +66,7 @@ impl DataValidationForumla2 {
         loop {
             match reader.read_event_into(&mut buf) {
                 Ok(Event::Start(ref e)) => {
-                    if e.name().into_inner() == b"xm:f" {
+                    if e.name().local_name().into_inner() == b"xm:f" {
                         let mut obj = Formula::default();
                         obj.set_attributes(reader, e);
                         self.value = obj;
@@ -74,7 +74,7 @@ impl DataValidationForumla2 {
                     }
                 }
                 Ok(Event::End(ref e)) => {
-                    if e.name().into_inner() == b"x14:formula2" {
+                    if e.name().local_name().into_inner() == b"formula2" {
                         return;
                     }
                 }

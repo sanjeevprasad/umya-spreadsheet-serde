@@ -266,7 +266,7 @@ impl PivotCacheDefinition {
         reader: &mut Reader<R>,
         e: &BytesStart,
     ) {
-        set_string_from_xml!(self, e, id, "r:id");
+        set_string_from_xml!(self, e, id, "id");
         set_string_from_xml!(self, e, refreshed_by, "refreshedBy");
         set_string_from_xml!(self, e, refreshed_date, "refreshedDate");
         set_string_from_xml!(self, e, created_version, "createdVersion");
@@ -277,26 +277,26 @@ impl PivotCacheDefinition {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"cacheSource" {
+                if e.name().local_name().into_inner() == b"cacheSource" {
                     let mut obj = CacheSource::default();
                     obj.set_attributes(reader, e, true);
                     self.set_cache_source(obj);
                 }
             },
             Event::Start(ref e) => {
-                if e.name().into_inner() == b"cacheSource" {
+                if e.name().local_name().into_inner() == b"cacheSource" {
                     let mut obj = CacheSource::default();
                     obj.set_attributes(reader, e, false);
                     self.set_cache_source(obj);
                 }
-                if e.name().into_inner() == b"cacheFields" {
+                if e.name().local_name().into_inner() == b"cacheFields" {
                     let mut obj = CacheFields::default();
                     obj.set_attributes(reader, e);
                     self.set_cache_fields(obj);
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"pivotCacheDefinition" {
+                if e.name().local_name().into_inner() == b"pivotCacheDefinition" {
                     return
                 }
             },

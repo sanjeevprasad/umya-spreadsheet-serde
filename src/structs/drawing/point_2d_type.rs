@@ -82,8 +82,8 @@ impl Point2DType {
         xml_read_loop!(
             reader,
             Event::End(ref e) => {
-                match e.name().into_inner() {
-                    b"a:chOff" | b"a:off" => return,
+                match e.name().local_name().into_inner() {
+                    b"chOff" | b"off" => return,
                     _ => (),
                 }
             },

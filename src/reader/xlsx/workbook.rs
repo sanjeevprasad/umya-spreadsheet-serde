@@ -35,7 +35,7 @@ pub(crate) fn read<R: io::Read + io::Seek>(
     xml_read_loop!(
         reader,
         Event::Empty(ref e) => {
-            match e.name().into_inner() {
+            match e.name().local_name().into_inner() {
                 b"workbookView" => {
                     let mut obj = WorkbookView::default();
                     obj.set_attributes(&mut reader, e);
@@ -49,7 +49,7 @@ pub(crate) fn read<R: io::Read + io::Seek>(
                 b"sheet" => {
                     let name_value = get_attribute(e, b"name").unwrap();
                     let sheet_id_value = get_attribute(e, b"sheetId").unwrap();
-                    let r_id_value = get_attribute(e, b"r:id").unwrap();
+                    let r_id_value = get_attribute(e, b"id").unwrap();
                     let state = get_attribute(e, b"state");
                     let mut worksheet = Worksheet::default();
                     worksheet.set_name(escape::unescape(&name_value).unwrap());
@@ -62,14 +62,14 @@ pub(crate) fn read<R: io::Read + io::Seek>(
                 }
                 b"pivotCache" => {
                     let cache_id = get_attribute(e, b"cacheId").unwrap();
-                    let r_id = get_attribute(e, b"r:id").unwrap();
+                    let r_id = get_attribute(e, b"id").unwrap();
                     wb.add_pivot_caches((r_id, cache_id, String::new()));
                 }
                 _ => (),
             }
         },
         Event::Start(ref e) => {
-            if e.name().into_inner() == b"definedName" {
+            if e.name().local_name().into_inner() == b"definedName" {
                 let mut obj = DefinedName::default();
                 obj.set_attributes(&mut reader, e);
                 defined_names.push(obj);

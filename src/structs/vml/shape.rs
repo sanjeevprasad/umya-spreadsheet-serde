@@ -404,35 +404,35 @@ impl Shape {
         set_string_from_xml!(self, e, stroked, "stoked");
         set_string_from_xml!(self, e, stroke_color, "stokecolor");
         set_string_from_xml!(self, e, stroke_weight, "stokeweight");
-        set_string_from_xml!(self, e, inset_mode, "o:insetmode");
-        set_string_from_xml!(self, e, optional_number, "o:spt");
+        set_string_from_xml!(self, e, inset_mode, "insetmode");
+        set_string_from_xml!(self, e, optional_number, "spt");
         set_string_from_xml!(self, e, coordinate_size, "coordsize");
 
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
-                b"v:fill" => {
+                match e.name().local_name().into_inner() {
+                b"fill" => {
                     let mut obj = Fill::default();
                     obj.set_attributes(reader, e, drawing_relationships);
                     self.set_fill(obj);
                 }
-                b"v:shadow" => {
+                b"shadow" => {
                     let mut obj = Shadow::default();
                     obj.set_attributes(reader, e);
                     self.set_shadow(obj);
                 }
-                b"v:path" => {
+                b"path" => {
                     let mut obj = Path::default();
                     obj.set_attributes(reader, e);
                     self.set_path(obj);
                 }
-                b"v:stroke" => {
+                b"stroke" => {
                     let mut obj = Stroke::default();
                     obj.set_attributes(reader, e);
                     self.set_stroke(obj);
                 }
-                b"v:imagedata" => {
+                b"imagedata" => {
                     let mut obj = ImageData::default();
                     obj.set_attributes(reader, e, drawing_relationships);
                     self.set_image_data(obj);
@@ -441,13 +441,13 @@ impl Shape {
                 }
             },
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                b"v:textbox" => {
+                match e.name().local_name().into_inner() {
+                b"textbox" => {
                     let mut obj = TextBox::default();
                     obj.set_attributes(reader, e);
                     self.set_text_box(obj);
                 }
-                b"x:ClientData" => {
+                b"ClientData" => {
                     let mut obj = ClientData::default();
                     obj.set_attributes(reader, e);
                     self.set_client_data(obj);
@@ -456,7 +456,7 @@ impl Shape {
                 }
             },
             Event::End(ref e) => {
-                if  e.name().into_inner() == b"v:shape" {
+                if  e.name().local_name().into_inner() == b"shape" {
                     return
                 }
             },

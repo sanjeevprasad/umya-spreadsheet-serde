@@ -529,23 +529,23 @@ impl RunProperties {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                b"a:solidFill" => {
+                match e.name().local_name().into_inner() {
+                b"solidFill" => {
                     let mut obj = SolidFill::default();
                     obj.set_attributes(reader, e);
                     self.set_solid_fill(obj);
                 }
-                b"a:ln" => {
+                b"ln" => {
                     let mut obj = Outline::default();
                     obj.set_attributes(reader, e);
                     self.set_outline(obj);
                 }
-                b"a:gradFill" => {
+                b"gradFill" => {
                     let mut obj = GradientFill::default();
                     obj.set_attributes(reader, e);
                     self.set_gradient_fill(obj);
                 }
-                b"a:effectLst" => {
+                b"effectLst" => {
                     let mut effect_list = EffectList::default();
                     effect_list.set_attributes(reader, e, false);
                     self.set_effect_list(effect_list);
@@ -554,28 +554,28 @@ impl RunProperties {
                 }
             },
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
-                b"a:latin" => {
+                match e.name().local_name().into_inner() {
+                b"latin" => {
                     let mut obj = TextFontType::default();
                     obj.set_attributes(reader, e, true);
                     self.set_latin_font(obj);
                 }
-                b"a:ea" => {
+                b"ea" => {
                     let mut obj = TextFontType::default();
                     obj.set_attributes(reader, e, true);
                     self.set_east_asian_font(obj);
                 }
-                b"a:cs" => {
+                b"cs" => {
                     let mut obj = TextFontType::default();
                     obj.set_attributes(reader, e, true);
                     self.set_complex_script_font(obj);
                 }
-                b"a:noFill" => {
+                b"noFill" => {
                     let obj = NoFill::default();
                     NoFill::set_attributes(reader, e, true);
                     self.set_no_fill(obj);
                 }
-                b"a:effectLst" => {
+                b"effectLst" => {
                     let mut obj = EffectList::default();
                     obj.set_attributes(reader, e, true);
                     self.set_effect_list(obj);
@@ -584,8 +584,8 @@ impl RunProperties {
                 }
             },
             Event::End(ref e) => {
-                match e.name().into_inner() {
-                    b"a:rPr" | b"a:endParaRPr" | b"a:defRPr" => return,
+                match e.name().local_name().into_inner() {
+                    b"rPr" | b"endParaRPr" | b"defRPr" => return,
                     _ => (),
                 }
             },

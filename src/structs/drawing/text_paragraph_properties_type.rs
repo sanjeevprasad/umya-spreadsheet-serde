@@ -203,25 +203,25 @@ impl TextParagraphPropertiesType {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"a:defRPr" {
+                if e.name().local_name().into_inner() == b"defRPr" {
                     let mut obj = RunProperties::default();
                     obj.set_attributes(reader, e, true);
                     self.set_default_run_properties(obj);
                 }
             },
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                b"a:spcBef" => {
+                match e.name().local_name().into_inner() {
+                b"spcBef" => {
                     let mut obj = SpaceBefore::default();
                     obj.set_attributes(reader, e);
                     self.set_space_before(obj);
                 }
-                b"a:spcAft" => {
+                b"spcAft" => {
                     let mut obj = SpaceAfter::default();
                     obj.set_attributes(reader, e);
                     self.set_space_after(obj);
                 }
-                b"a:defRPr" => {
+                b"defRPr" => {
                     let mut obj = RunProperties::default();
                     obj.set_attributes(reader, e, false);
                     self.set_default_run_properties(obj);
@@ -230,17 +230,17 @@ impl TextParagraphPropertiesType {
                 }
             },
             Event::End(ref e) => {
-                match e.name().into_inner() {
-                    b"a:defPPr"  |
-                    b"a:lvl1pPr" |
-                    b"a:lvl2pPr" |
-                    b"a:lvl3pPr" |
-                    b"a:lvl4pPr" |
-                    b"a:lvl5pPr" |
-                    b"a:lvl6pPr" |
-                    b"a:lvl7pPr" |
-                    b"a:lvl8pPr" |
-                    b"a:lvl9pPr" => return,
+                match e.name().local_name().into_inner() {
+                    b"defPPr"  |
+                    b"lvl1pPr" |
+                    b"lvl2pPr" |
+                    b"lvl3pPr" |
+                    b"lvl4pPr" |
+                    b"lvl5pPr" |
+                    b"lvl6pPr" |
+                    b"lvl7pPr" |
+                    b"lvl8pPr" |
+                    b"lvl9pPr" => return,
                     _ =>()
                 }
             },

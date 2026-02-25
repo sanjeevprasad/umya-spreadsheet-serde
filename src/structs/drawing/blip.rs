@@ -97,7 +97,7 @@ impl Blip {
             self.set_cstate(v);
         }
 
-        let picture_id = get_attribute(e, b"r:embed").unwrap();
+        let picture_id = get_attribute(e, b"embed").unwrap();
         let relationship = drawing_relationships.relationship_by_rid(&picture_id);
         self.image_mut()
             .set_image_name(relationship.raw_file().file_name());
@@ -111,7 +111,7 @@ impl Blip {
         xml_read_loop!(
             reader,
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:blip" {
+                if e.name().local_name().into_inner() == b"blip" {
                     return
                 }
             },

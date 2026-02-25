@@ -89,7 +89,7 @@ pub(crate) fn get_attribute(e: &quick_xml::events::BytesStart<'_>, key: &[u8]) -
     e.attributes()
         .with_checks(false)
         .find_map(|attr| match attr {
-            Ok(ref attr) if attr.key.into_inner() == key => {
+            Ok(ref attr) if attr.key.local_name().into_inner() == key => {
                 Some(get_attribute_value(attr).unwrap())
             }
             _ => None,

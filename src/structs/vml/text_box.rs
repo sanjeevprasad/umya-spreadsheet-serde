@@ -85,7 +85,7 @@ impl TextBox {
         loop {
             match reader.read_event_into(&mut buf) {
                 Ok(Event::Empty(ref e)) => {
-                    let mut tag = std::str::from_utf8(e.name().into_inner())
+                    let mut tag = std::str::from_utf8(e.name().local_name().into_inner())
                         .unwrap()
                         .to_string();
                     let mut attrs = vec![];
@@ -105,7 +105,7 @@ impl TextBox {
                     inner_text = format!("{inner_text}<{tag}/>");
                 }
                 Ok(Event::Start(ref e)) => {
-                    let mut tag = std::str::from_utf8(e.name().into_inner())
+                    let mut tag = std::str::from_utf8(e.name().local_name().into_inner())
                         .unwrap()
                         .to_string();
                     let mut attrs = vec![];
@@ -129,10 +129,10 @@ impl TextBox {
                     inner_text = format!("{inner_text}{s}");
                 }
                 Ok(Event::End(ref e)) => {
-                    if e.name().into_inner() == b"v:textbox" {
+                    if e.name().local_name().into_inner() == b"textbox" {
                         break;
                     }
-                    let s = std::str::from_utf8(e.name().into_inner()).unwrap();
+                    let s = std::str::from_utf8(e.name().local_name().into_inner()).unwrap();
                     inner_text = format!("{inner_text}</{s}>");
                 }
                 Ok(Event::Eof) => break,

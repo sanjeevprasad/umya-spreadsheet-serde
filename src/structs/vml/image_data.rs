@@ -79,7 +79,7 @@ impl ImageData {
         e: &BytesStart,
         drawing_relationships: Option<&RawRelationships>,
     ) {
-        if let Some(relid) = get_attribute(e, b"o:relid") {
+        if let Some(relid) = get_attribute(e, b"relid") {
             if let Some(rel) = drawing_relationships {
                 let relationship = rel.relationship_by_rid(&relid);
                 let mut obj = MediaObject::default();
@@ -89,7 +89,7 @@ impl ImageData {
             }
         }
 
-        set_string_from_xml!(self, e, title, "o:title");
+        set_string_from_xml!(self, e, title, "title");
     }
 
     pub(crate) fn write_to(

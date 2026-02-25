@@ -424,48 +424,48 @@ impl Outline {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                    b"a:solidFill" => {
+                match e.name().local_name().into_inner() {
+                    b"solidFill" => {
                         let mut solid_fill = SolidFill::default();
                         solid_fill.set_attributes(reader, e);
                         self.set_solid_fill(solid_fill);
                     }
-                    b"a:gradFill" => {
+                    b"gradFill" => {
                         let mut obj = GradientFill::default();
                         obj.set_attributes(reader, e);
                         self.set_gradient_fill(obj);
                     }
-                    b"a:tailEnd" => {
+                    b"tailEnd" => {
                         let mut obj = TailEnd::default();
                         obj.set_attributes(reader, e, false);
                         self.set_tail_end(obj);
                     }
-                    b"a:noFill" => {
+                    b"noFill" => {
                         let obj = NoFill::default();
                         NoFill::set_attributes(reader, e, false);
                         self.set_no_fill(obj);
                     }
-                    b"a:bevel" => {
+                    b"bevel" => {
                         let obj = Bevel::default();
                         Bevel::set_attributes(reader, e, false);
                         self.set_bevel(obj);
                     }
-                    b"a:miter" => {
+                    b"miter" => {
                         let mut obj = Miter::default();
                         obj.set_attributes(reader, e, false);
                         self.set_miter(obj);
                     }
-                    b"a:prstDash" => {
+                    b"prstDash" => {
                         let mut obj = PresetDash::default();
                         obj.set_attributes(reader, e, false);
                         self.set_preset_dash(obj);
                     }
-                    b"a:round" => {
+                    b"round" => {
                         let obj = Round::default();
                         Round::set_attributes(reader, e, false);
                         self.set_round(obj);
                     }
-                    b"a:sysClr" => {
+                    b"sysClr" => {
                         let mut obj = SystemColor::default();
                         obj.set_attributes(reader, e, false);
                         self.set_system_color(obj);
@@ -474,38 +474,38 @@ impl Outline {
                 }
             },
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
-                    b"a:tailEnd" => {
+                match e.name().local_name().into_inner() {
+                    b"tailEnd" => {
                         let mut obj = TailEnd::default();
                         obj.set_attributes(reader, e, true);
                         self.set_tail_end(obj);
                     }
-                    b"a:noFill" => {
+                    b"noFill" => {
                         let obj = NoFill::default();
                         NoFill::set_attributes(reader, e, true);
                         self.set_no_fill(obj);
                     }
-                    b"a:bevel" => {
+                    b"bevel" => {
                         let obj = Bevel::default();
                         Bevel::set_attributes(reader, e, true);
                         self.set_bevel(obj);
                     }
-                    b"a:miter" => {
+                    b"miter" => {
                         let mut obj = Miter::default();
                         obj.set_attributes(reader, e, true);
                         self.set_miter(obj);
                     }
-                    b"a:prstDash" => {
+                    b"prstDash" => {
                         let mut obj = PresetDash::default();
                         obj.set_attributes(reader, e, true);
                         self.set_preset_dash(obj);
                     }
-                    b"a:round" => {
+                    b"round" => {
                         let obj = Round::default();
                         Round::set_attributes(reader, e, true);
                         self.set_round(obj);
                     }
-                    b"a:sysClr" => {
+                    b"sysClr" => {
                         let mut obj = SystemColor::default();
                         obj.set_attributes(reader, e, true);
                         self.set_system_color(obj);
@@ -514,7 +514,7 @@ impl Outline {
                 }
             },
             Event::End(ref e) => {
-                if  e.name().into_inner() == b"a:ln" {
+                if  e.name().local_name().into_inner() == b"ln" {
                     return;
                 }
             },

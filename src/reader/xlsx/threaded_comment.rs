@@ -20,7 +20,7 @@ pub(crate) fn read(worksheet: &mut Worksheet, drawing_file: &RawFile) {
     xml_read_loop!(
         reader,
         Event::Start(ref e) => {
-            if e.name().into_inner() ==  b"threadedComment" {
+            if e.name().local_name().into_inner() ==  b"threadedComment" {
                 let mut obj = ThreadedComment::default();
                 obj.set_attributes(&mut reader, e);
                 worksheet.add_threaded_comments(obj);

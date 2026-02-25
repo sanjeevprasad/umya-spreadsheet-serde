@@ -314,13 +314,13 @@ impl DataValidation {
         let mut buf = Vec::new();
         loop {
             match reader.read_event_into(&mut buf) {
-                Ok(Event::Start(ref e)) => match e.name().into_inner() {
-                    b"x14:formula1" => {
+                Ok(Event::Start(ref e)) => match e.name().local_name().into_inner() {
+                    b"formula1" => {
                         let mut obj = DataValidationForumla1::default();
                         obj.set_attributes(reader, e);
                         self.formula1 = Some(Box::new(obj));
                     }
-                    b"x14:formula2" => {
+                    b"formula2" => {
                         let mut obj = DataValidationForumla2::default();
                         obj.set_attributes(reader, e);
                         self.formula2 = Some(Box::new(obj));
@@ -333,7 +333,7 @@ impl DataValidation {
                     _ => (),
                 },
                 Ok(Event::End(ref e)) => {
-                    if e.name().into_inner() == b"x14:dataValidation" {
+                    if e.name().local_name().into_inner() == b"dataValidation" {
                         return;
                     }
                 }

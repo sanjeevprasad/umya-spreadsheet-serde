@@ -278,12 +278,12 @@ impl PresetGeometry {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                if e.name().into_inner() == b"a:avLst" {
+                if e.name().local_name().into_inner() == b"avLst" {
                     self.adjust_value_list_mut().set_attributes(reader, e);
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:prstGeom" {
+                if e.name().local_name().into_inner() == b"prstGeom" {
                     return;
                 }
             },

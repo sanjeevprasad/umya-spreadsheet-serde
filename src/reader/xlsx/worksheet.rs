@@ -47,11 +47,11 @@ pub(crate) fn read(
     let mut formula_shared_list: HashMap<u32, (String, Vec<FormulaToken>)> = HashMap::new();
     xml_read_loop!(
         reader,
-        Event::Start(ref e) => match e.name().into_inner() {
+        Event::Start(ref e) => match e.name().local_name().into_inner() {
             b"sheetPr" => {
                 for a in e.attributes().with_checks(false) {
                     match a {
-                        Ok(ref attr) if attr.key.0 == b"codeName" => {
+                        Ok(ref attr) if attr.key.local_name().into_inner() == b"codeName" => {
                             worksheet.set_code_name(get_attribute_value(attr)?);
                         }
                         Ok(_) | Err(_) => {}
@@ -71,7 +71,7 @@ pub(crate) fn read(
             b"selection" => {
                 for a in e.attributes().with_checks(false) {
                     match a {
-                        Ok(ref attr) if attr.key.0 == b"activeCell" => {
+                        Ok(ref attr) if attr.key.local_name().into_inner() == b"activeCell" => {
                             worksheet.set_active_cell(get_attribute_value(attr)?);
                         }
                         Ok(_) | Err(_) => {}
@@ -110,14 +110,15 @@ pub(crate) fn read(
                 worksheet.add_conditional_formatting_collection(obj);
             }
             b"dataValidations" => {
-                let mut obj = DataValidations::default();
-                obj.set_attributes(&mut reader, e);
-                worksheet.set_data_validations(obj);
-            }
-            b"x14:dataValidations" => {
-                let mut obj = DataValidations2010::default();
-                obj.set_attributes(&mut reader, e);
-                worksheet.set_data_validations_2010(obj);
+                if e.name().prefix().map_or(false, |p| p.into_inner() == b"x14") {
+                    let mut obj = DataValidations2010::default();
+                    obj.set_attributes(&mut reader, e);
+                    worksheet.set_data_validations_2010(obj);
+                } else {
+                    let mut obj = DataValidations::default();
+                    obj.set_attributes(&mut reader, e);
+                    worksheet.set_data_validations(obj);
+                }
             }
             b"oleObjects" => {
                 let mut obj = OleObjects::default();
@@ -145,11 +146,11 @@ pub(crate) fn read(
             }
             _ => (),
         },
-        Event::Empty(ref e) => match e.name().into_inner() {
+        Event::Empty(ref e) => match e.name().local_name().into_inner() {
             b"sheetPr" => {
                 for a in e.attributes().with_checks(false) {
                     match a {
-                        Ok(ref attr) if attr.key.0 == b"codeName" => {
+                        Ok(ref attr) if attr.key.local_name().into_inner() == b"codeName" => {
                             worksheet.set_code_name(get_attribute_value(attr)?);
                         }
                         Ok(_) | Err(_) => {}
@@ -169,7 +170,7 @@ pub(crate) fn read(
             b"selection" => {
                 for a in e.attributes().with_checks(false) {
                     match a {
-                        Ok(ref attr) if attr.key.0 == b"activeCell" => {
+                        Ok(ref attr) if attr.key.local_name().into_inner() == b"activeCell" => {
                             worksheet.set_active_cell(get_attribute_value(attr)?);
                         }
                         Ok(_) | Err(_) => {}
@@ -246,7 +247,7 @@ pub(crate) fn read_lite(
     xml_read_loop!(
         reader,
         Event::Start(ref e) => {
-            if e.name().into_inner() == b"row" {
+            if e.name().local_name().into_inner() == b"row" {
                 let mut obj = Row::default();
                 obj.set_attributes(
                     &mut reader,
@@ -260,7 +261,7 @@ pub(crate) fn read_lite(
             }
         },
         Event::Empty(ref e) => {
-            if e.name().into_inner() == b"row" {
+            if e.name().local_name().into_inner() == b"row" {
                 let mut obj = Row::default();
                 obj.set_attributes(
                     &mut reader,
@@ -290,7 +291,7 @@ fn get_hyperlink(
         hyperlink.set_url(v);
         hyperlink.set_location(true);
     }
-    if let Some(v) = get_attribute(e, b"r:id") {
+    if let Some(v) = get_attribute(e, b"id") {
         let relationship = raw_relationships.unwrap().relationship_by_rid(&v);
         hyperlink.set_url(relationship.target());
     }

@@ -145,12 +145,12 @@ impl Border {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"color" {
+                if e.name().local_name().into_inner() == b"color" {
                     self.color.clone().unwrap_or_default().set_attributes(reader, e, true);
                 }
             },
             Event::End(ref e) => {
-                match e.name().into_inner() {
+                match e.name().local_name().into_inner() {
                     b"left"     |
                     b"right"    |
                     b"top"      |

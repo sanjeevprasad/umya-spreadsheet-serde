@@ -278,7 +278,7 @@ impl BodyProperties {
         empty_flag: bool,
     ) {
         for attr in e.attributes().with_checks(false).flatten() {
-            let key = attr.key.into_inner();
+            let key = attr.key.local_name().into_inner();
             let value = get_attribute_value(&attr).unwrap();
             match key {
                 b"rot" => {
@@ -325,14 +325,14 @@ impl BodyProperties {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"a:spAutoFit" {
+                if e.name().local_name().into_inner() == b"spAutoFit" {
                     let obj = ShapeAutoFit::default();
                     ShapeAutoFit::set_attributes(reader, e);
                     self.set_shape_auto_fit(obj);
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:bodyPr" {
+                if e.name().local_name().into_inner() == b"bodyPr" {
                      return
                 }
             },

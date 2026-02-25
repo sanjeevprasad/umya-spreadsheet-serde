@@ -21,12 +21,12 @@ pub(crate) fn read(raw_file: &RawFile, pivot_table: &mut PivotTable) {
     loop {
         match reader.read_event_into(&mut buf) {
             Ok(Event::Start(ref e)) => {
-                if e.name().into_inner() == b"pivotCacheDefinition" {
+                if e.name().local_name().into_inner() == b"pivotCacheDefinition" {
                     pivot_cache_def.set_attributes(&mut reader, e);
                 }
             }
             Ok(Event::End(ref e)) => {
-                if e.name().into_inner() == b"pivotCacheDefinition" {
+                if e.name().local_name().into_inner() == b"pivotCacheDefinition" {
                     break;
                 }
             }

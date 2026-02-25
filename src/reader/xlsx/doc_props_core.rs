@@ -30,7 +30,7 @@ pub(crate) fn read<R: io::Read + io::Seek>(
     loop {
         match reader.read_event_into(&mut buf) {
             Ok(Event::Start(ref e)) => {
-                if e.name().into_inner() == b"cp:coreProperties" {
+                if e.name().local_name().into_inner() == b"coreProperties" {
                     wb.properties_mut().set_attributes_core(&mut reader, e);
                 }
             }

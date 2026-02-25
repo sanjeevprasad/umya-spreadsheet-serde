@@ -86,17 +86,17 @@ impl StringReference {
     ) {
         xml_read_loop!(
             reader,
-            Event::Start(ref e) => match e.name().0 {
-                b"c:f" => {
+            Event::Start(ref e) => match e.name().local_name().into_inner() {
+                b"f" => {
                     self.formula.set_attributes(reader, e);
                 }
-                b"c:strCache" => {
+                b"strCache" => {
                     StringCache::set_attributes(reader, e);
                 }
                 _ => (),
             },
             Event::End(ref e) => {
-                if e.name().0 == b"c:strRef" {
+                if e.name().local_name().into_inner() == b"strRef" {
                     return;
                 }
             },

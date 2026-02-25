@@ -27,11 +27,11 @@ pub(crate) fn read(worksheet: &mut Worksheet, table_file: &RawFile) -> Result<()
     let mut string_value = String::new();
     loop {
         match reader.read_event_into(&mut buf) {
-            Ok(Event::Empty(ref e)) => match e.name().into_inner() {
+            Ok(Event::Empty(ref e)) => match e.name().local_name().into_inner() {
                 b"tableColumn" => {
                     table_column = TableColumn::default();
                     for attr in e.attributes().with_checks(false).flatten() {
-                        match attr.key.0 {
+                        match attr.key.local_name().into_inner() {
                             b"name" => {
                                 let attr_val = get_attribute_value(&attr)?;
                                 table_column.set_name(attr_val);
@@ -61,7 +61,7 @@ pub(crate) fn read(worksheet: &mut Worksheet, table_file: &RawFile) -> Result<()
                     let mut show_col_stripes = ShowStripes::Hide;
                     for attr in e.attributes().with_checks(false).flatten() {
                         let attr_val = get_attribute_value(&attr)?;
-                        match attr.key.0 {
+                        match attr.key.local_name().into_inner() {
                             b"name" => {
                                 name = attr_val;
                             }
@@ -109,11 +109,11 @@ pub(crate) fn read(worksheet: &mut Worksheet, table_file: &RawFile) -> Result<()
                 _ => (),
             },
             Ok(Event::Text(e)) => string_value = e.unescape().unwrap().to_string(),
-            Ok(Event::Start(ref e)) => match e.name().into_inner() {
+            Ok(Event::Start(ref e)) => match e.name().local_name().into_inner() {
                 b"table" => {
                     for attr in e.attributes().with_checks(false).flatten() {
                         let attr_val = get_attribute_value(&attr)?;
-                        match attr.key.0 {
+                        match attr.key.local_name().into_inner() {
                             b"displayName" => {
                                 table.set_display_name(&attr_val);
                             }
@@ -139,7 +139,7 @@ pub(crate) fn read(worksheet: &mut Worksheet, table_file: &RawFile) -> Result<()
                 b"tableColumn" => {
                     table_column = TableColumn::default();
                     for attr in e.attributes().with_checks(false).flatten() {
-                        match attr.key.0 {
+                        match attr.key.local_name().into_inner() {
                             b"name" => {
                                 let attr_val = get_attribute_value(&attr)?;
                                 table_column.set_name(attr_val);
@@ -158,7 +158,7 @@ pub(crate) fn read(worksheet: &mut Worksheet, table_file: &RawFile) -> Result<()
                 }
                 _ => (),
             },
-            Ok(Event::End(ref e)) => match e.name().into_inner() {
+            Ok(Event::End(ref e)) => match e.name().local_name().into_inner() {
                 b"calculatedColumnFormula" => {
                     table_column.set_calculated_column_formula(string_value);
                     string_value = String::new();

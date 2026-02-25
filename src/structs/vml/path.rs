@@ -43,7 +43,7 @@ impl Path {
         _reader: &mut Reader<R>,
         e: &BytesStart,
     ) {
-        set_string_from_xml!(self, e, connection_point_type, "o:connecttype");
+        set_string_from_xml!(self, e, connection_point_type, "connecttype");
     }
 
     pub(crate) fn write_to(&self, writer: &mut Writer<Cursor<Vec<u8>>>) {

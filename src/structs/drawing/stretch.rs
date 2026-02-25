@@ -63,14 +63,14 @@ impl Stretch {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                if e.name().into_inner() == b"a:fillRect" {
+                if e.name().local_name().into_inner() == b"fillRect" {
                     let fill_rectangle = FillRectangle::default();
                     FillRectangle::set_attributes(reader, e);
                     self.set_fill_rectangle(fill_rectangle);
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:stretch" {
+                if e.name().local_name().into_inner() == b"stretch" {
                     return;
                 }
             },

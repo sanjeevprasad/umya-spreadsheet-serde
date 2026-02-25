@@ -103,7 +103,7 @@ impl SharedStringTable {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                if e.name().into_inner() == b"si" {
+                if e.name().local_name().into_inner() == b"si" {
                     let mut shared_string_item = SharedStringItem::default();
                     shared_string_item.set_attributes(reader, e);
 
@@ -115,7 +115,7 @@ impl SharedStringTable {
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"sst" {
+                if e.name().local_name().into_inner() == b"sst" {
                     return
                 }
             },

@@ -71,7 +71,7 @@ impl Formula {
                     value = e.unescape().unwrap().to_string();
                 }
                 Ok(Event::End(ref e)) => {
-                    if e.name().into_inner() == b"xm:f" {
+                    if e.name().local_name().into_inner() == b"xm:f" {
                         let mut obj = Address::default();
                         obj.set_address(value);
                         self.value = obj;

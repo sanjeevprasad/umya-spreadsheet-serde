@@ -87,7 +87,7 @@ impl DataBar {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
+                match e.name().local_name().into_inner() {
                     b"cfvo" => {
                         let mut obj = ConditionalFormatValueObject::default();
                         obj.set_attributes(reader, e, true);
@@ -102,7 +102,7 @@ impl DataBar {
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"dataBar" {
+                if e.name().local_name().into_inner() == b"dataBar" {
                     return
                 }
             },

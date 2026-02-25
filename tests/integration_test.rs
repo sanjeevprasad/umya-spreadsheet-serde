@@ -2208,3 +2208,38 @@ fn issue_298() {
     let path = std::path::Path::new("./tests/result_files/r_issue_298.xlsx");
     let _unused = writer::xlsx::write(&book, path);
 }
+
+#[test]
+fn namespaced_prefix_xlsx() {
+    // This file uses explicit namespace prefixes (e.g. <x:row> instead of <row>)
+    let path = std::path::Path::new("./tests/test_files/sample_financial_data_multi_sheet.xlsx");
+    let book = reader::xlsx::read(path).expect("failed to read namespaced xlsx");
+
+    // Verify 5 sheets exist with expected names
+    let sheet_names: Vec<&str> = book
+        .get_sheet_collection()
+        .iter()
+        .map(|s| s.get_name())
+        .collect();
+    assert_eq!(sheet_names.len(), 5);
+    assert_eq!(sheet_names[0], "Transactions");
+    assert_eq!(sheet_names[1], "Accounts");
+    assert_eq!(sheet_names[2], "Budget");
+    assert_eq!(sheet_names[3], "Dashboard");
+    assert_eq!(sheet_names[4], "Function_Demos");
+
+    // Verify each sheet has data (non-zero highest row/column)
+    for sheet in book.get_sheet_collection() {
+        let highest_row = sheet.get_highest_row();
+        let highest_column = sheet.get_highest_column();
+        assert!(
+            highest_row > 0 && highest_column > 0,
+            "Sheet '{}' has no data: row={highest_row}, col={highest_column}",
+            sheet.get_name()
+        );
+    }
+
+    // Verify round-trip write
+    let path = std::path::Path::new("./tests/result_files/r_namespaced_prefix.xlsx");
+    let _unused = writer::xlsx::write(&book, path);
+}

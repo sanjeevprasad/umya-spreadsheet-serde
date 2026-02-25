@@ -76,13 +76,13 @@ impl Scene3DType {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
-                    b"a:camera" => {
+                match e.name().local_name().into_inner() {
+                    b"camera" => {
                         let mut obj = Camera::default();
                         obj.set_attributes(reader, e, true);
                         self.set_camera(obj);
                     }
-                    b"a:lightRig" => {
+                    b"lightRig" => {
                         let mut obj = LightRig::default();
                         obj.set_attributes(reader, e, true);
                         self.set_light_rig(obj);
@@ -91,13 +91,13 @@ impl Scene3DType {
                 }
             },
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                    b"a:camera" => {
+                match e.name().local_name().into_inner() {
+                    b"camera" => {
                         let mut obj = Camera::default();
                         obj.set_attributes(reader, e, false);
                         self.set_camera(obj);
                     }
-                    b"a:lightRig" => {
+                    b"lightRig" => {
                         let mut obj = LightRig::default();
                         obj.set_attributes(reader, e, false);
                         self.set_light_rig(obj);
@@ -106,7 +106,7 @@ impl Scene3DType {
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:scene3d" {
+                if e.name().local_name().into_inner() == b"scene3d" {
                     return;
                 }
             },

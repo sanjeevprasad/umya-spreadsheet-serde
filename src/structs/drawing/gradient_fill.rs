@@ -182,13 +182,13 @@ impl GradientFill {
         xml_read_loop!(
             reader,
             Event::Empty(ref e) => {
-                match e.name().into_inner() {
-                b"a:lin" => {
+                match e.name().local_name().into_inner() {
+                b"lin" => {
                     let mut obj = LinearGradientFill::default();
                     obj.set_attributes(reader, e, true);
                     self.set_linear_gradient_fill(obj);
                 }
-                b"a:tileRect" => {
+                b"tileRect" => {
                     let obj = TileRectangle::default();
                     TileRectangle::set_attributes(reader, e, true);
                     self.set_tile_rectangle(obj);
@@ -197,25 +197,25 @@ impl GradientFill {
                 }
             },
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                b"a:lin" => {
+                match e.name().local_name().into_inner() {
+                b"lin" => {
                     let mut obj = LinearGradientFill::default();
                     obj.set_attributes(reader, e, false);
                     self.set_linear_gradient_fill(obj);
                 }
-                b"a:tileRect" => {
+                b"tileRect" => {
                     let obj = TileRectangle::default();
                     TileRectangle::set_attributes(reader, e, false);
                     self.set_tile_rectangle(obj);
                 }
-                b"a:gsLst" => {
+                b"gsLst" => {
                     self.gradient_stop_list.set_attributes(reader, e);
                 }
                 _ => (),
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"a:gradFill" {
+                if e.name().local_name().into_inner() == b"gradFill" {
                     return
                 }
             },

@@ -241,12 +241,12 @@ impl OleObject {
         xml_read_loop!(
             reader,
             Event::Start(ref e) => {
-                match e.name().into_inner() {
-                    b"mc:Choice" => {
+                match e.name().local_name().into_inner() {
+                    b"Choice" => {
                         alternate_content = "Choice";
                         set_string_from_xml!(self, e, requires, "Requires");
                     }
-                    b"mc:Fallback" => {
+                    b"Fallback" => {
                         alternate_content = "Fallback";
                     }
                     b"oleObject" => {
@@ -254,7 +254,7 @@ impl OleObject {
                             self.prog_id
                                 .set_value_string(get_attribute(e, b"progId").unwrap());
 
-                            let r_id = get_attribute(e, b"r:id").unwrap();
+                            let r_id = get_attribute(e, b"id").unwrap();
                             let attached_file =
                                 relationships.relationship_by_rid(&r_id).raw_file();
                             self.set_object_extension(attached_file.extension());
@@ -270,7 +270,7 @@ impl OleObject {
                 }
             },
             Event::End(ref e) => {
-                if e.name().into_inner() == b"mc:AlternateContent" {
+                if e.name().local_name().into_inner() == b"AlternateContent" {
                     return
                 }
             },

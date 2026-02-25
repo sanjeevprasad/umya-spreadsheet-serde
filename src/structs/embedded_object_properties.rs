@@ -184,7 +184,7 @@ impl EmbeddedObjectProperties {
         e: &BytesStart,
         relationships: &RawRelationships,
     ) {
-        let r_id = get_attribute(e, b"r:id").unwrap();
+        let r_id = get_attribute(e, b"id").unwrap();
         let attached_file = relationships.relationship_by_rid(&r_id).raw_file();
 
         self.image_mut()
@@ -198,12 +198,12 @@ impl EmbeddedObjectProperties {
         xml_read_loop!(
             reader,
                 Event::Start(ref e) => {
-                    if e.name().into_inner() == b"anchor" {
+                    if e.name().local_name().into_inner() == b"anchor" {
                         self.object_anchor.set_attributes(reader, e);
                     }
                 },
                 Event::End(ref e) => {
-                    if e.name().into_inner() == b"objectPr" {
+                    if e.name().local_name().into_inner() == b"objectPr" {
                         return
                     }
                 },
