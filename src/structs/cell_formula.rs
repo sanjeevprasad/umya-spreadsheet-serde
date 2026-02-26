@@ -22,11 +22,7 @@ use crate::{
             parse_to_tokens,
         },
     },
-    reader::driver::{
-        get_attribute,
-        set_string_from_xml,
-        xml_read_loop,
-    },
+    reader::driver::xml_read_loop,
     structs::{
         BooleanValue,
         CellFormulaValues,

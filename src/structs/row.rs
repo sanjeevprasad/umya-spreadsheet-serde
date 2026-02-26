@@ -24,11 +24,7 @@ use super::{
 };
 use crate::{
     helper::formula::FormulaToken,
-    reader::driver::{
-        get_attribute,
-        set_string_from_xml,
-        xml_read_loop,
-    },
+    reader::driver::xml_read_loop,
     traits::AdjustmentValue,
     writer::driver::write_start_tag,
 };
@@ -42,7 +38,7 @@ pub struct Row {
     thick_bot:     BooleanValue,
     custom_height: BooleanValue,
     hidden:        BooleanValue,
-    style:         Box<Style>,
+    style:         Style,
 }
 impl Default for Row {
     #[inline]
@@ -54,7 +50,7 @@ impl Default for Row {
             thick_bot:     BooleanValue::default(),
             custom_height: BooleanValue::default(),
             hidden:        BooleanValue::default(),
-            style:         Box::new(Style::default()),
+            style:         Style::default(),
         }
     }
 }
@@ -200,13 +196,13 @@ impl Row {
 
     #[inline]
     pub fn set_style(&mut self, value: Style) -> &mut Self {
-        *self.style = value;
+        self.style = value;
         self
     }
 
     #[inline]
     pub(crate) fn has_style(&self) -> bool {
-        *self.style != Style::default()
+        self.style != Style::default()
     }
 
     #[allow(clippy::too_many_arguments)]
