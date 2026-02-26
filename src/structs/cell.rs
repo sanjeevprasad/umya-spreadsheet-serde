@@ -25,10 +25,6 @@ use crate::{
         },
         number_format::to_formatted_string,
     },
-    reader::driver::{
-        get_attribute,
-        set_string_from_xml,
-    },
     structs::{
         CellFormula,
         CellFormulaValues,
@@ -536,24 +532,44 @@ impl Cell {
         empty_flag: bool,
         formula_shared_list: &mut HashMap<u32, (String, Vec<FormulaToken>)>,
     ) {
-        let mut type_value: String = String::new();
+        let mut type_value: &[u8] = b"";
         let mut cell_reference: String = String::new();
 
-        if let Some(v) = get_attribute(e, b"r") {
-            cell_reference = v;
-            self.coordinate.set_coordinate(&cell_reference);
+        for attr in e.attributes().with_checks(false).flatten() {
+            match attr.key.local_name().into_inner() {
+                b"r" => {
+                    cell_reference = String::from_utf8(attr.value.into_owned())
+                        .unwrap_or_default();
+                    self.coordinate.set_coordinate(&cell_reference);
+                }
+                b"s" => {
+                    if let Ok(s) = std::str::from_utf8(&attr.value) {
+                        if let Ok(idx) = s.parse::<usize>() {
+                            self.set_style(stylesheet.style(idx));
+                        }
+                    }
+                }
+                b"t" => {
+                    type_value = match &*attr.value {
+                        b"str" => b"str",
+                        b"s" => b"s",
+                        b"b" => b"b",
+                        b"e" => b"e",
+                        b"n" => b"n",
+                        b"inlineStr" => b"inlineStr",
+                        _ => b"",
+                    };
+                }
+                b"cm" => {
+                    if let Ok(s) = std::str::from_utf8(&attr.value) {
+                        if let Ok(v) = s.parse::<u32>() {
+                            self.cell_meta_index.set_value(v);
+                        }
+                    }
+                }
+                _ => {}
+            }
         }
-
-        if let Some(v) = get_attribute(e, b"s") {
-            let style = stylesheet.style(v.parse::<usize>().unwrap());
-            self.set_style(style);
-        }
-
-        if let Some(v) = get_attribute(e, b"t") {
-            type_value = v;
-        }
-
-        set_string_from_xml!(self, e, cell_meta_index, "cm");
 
         if empty_flag {
             return;
@@ -589,11 +605,11 @@ impl Cell {
                     }
                 }
                 Ok(Event::End(ref e)) => match e.name().local_name().into_inner() {
-                    b"v" => match type_value.as_str() {
-                        "str" => {
+                    b"v" => match type_value {
+                        b"str" => {
                             self.set_value_string_crate(&string_value);
                         }
-                        "s" => {
+                        b"s" => {
                             let index = string_value.parse::<usize>().unwrap();
                             let shared_string_item = shared_string_table
                                 .shared_string_item()
@@ -601,20 +617,20 @@ impl Cell {
                                 .unwrap();
                             self.set_shared_string_item(shared_string_item);
                         }
-                        "b" => {
+                        b"b" => {
                             let prm = string_value == "1";
                             self.set_value_bool_crate(prm);
                         }
-                        "e" => {
+                        b"e" => {
                             self.set_error(&string_value);
                         }
-                        "" | "n" => {
+                        b"" | b"n" => {
                             self.set_value_crate(&string_value);
                         }
                         _ => {}
                     },
                     b"is" => {
-                        if type_value == "inlineStr" {
+                        if type_value == b"inlineStr" {
                             self.set_value_crate(&string_value);
                         }
                     }

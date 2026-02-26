@@ -1,6 +1,5 @@
 use std::iter::successors;
 
-use crate::helper::utils::compile_regex;
 
 /// Converts a 1-based index to a string representation using letters
 /// similar to Excel column naming (e.g., 1 -> "A", 27 -> "AA").
@@ -192,26 +191,54 @@ pub fn index_from_coordinate<T>(coordinate: T) -> CellIndex
 where
     T: AsRef<str>,
 {
-    let re = compile_regex!(r"((\$)?([A-Z]{1,3}))?((\$)?([0-9]+))?");
+    let bytes = coordinate.as_ref().as_bytes();
+    let len = bytes.len();
+    let mut i = 0;
 
-    re.captures(coordinate.as_ref())
-        .ok()
-        .flatten()
-        .map(|v| {
-            let col = v.get(3).map(|v| alpha_to_index(v.as_str())); // col number: [A-Z]{1,3}
-            let row = v.get(6).and_then(|v| v.as_str().parse::<u32>().ok()); // row number: [0-9]+
+    // Optional '$' before column
+    let col_lock = i < len && bytes[i] == b'$';
+    if col_lock {
+        i += 1;
+    }
 
-            let col_lock_flg = col.map(|_col| {
-                v.get(2).is_some() // col lock flag: (\$)?
-            });
+    // Read column letters (A-Z, a-z)
+    let col_start = i;
+    while i < len && bytes[i].is_ascii_alphabetic() {
+        i += 1;
+    }
 
-            let row_lock_flg = row.map(|_row| {
-                v.get(5).is_some() // row lock flag: (\$)?
-            });
+    let (col, col_lock_flag) = if i > col_start {
+        let mut col_num: u32 = 0;
+        for &b in &bytes[col_start..i] {
+            let ch = b.to_ascii_uppercase();
+            col_num = col_num * 26 + (ch - b'A') as u32 + 1;
+        }
+        (Some(col_num), Some(col_lock))
+    } else {
+        (None, None)
+    };
 
-            (col, row, col_lock_flg, row_lock_flg)
-        })
-        .unwrap_or_default()
+    // Optional '$' before row
+    let row_lock = i < len && bytes[i] == b'$';
+    if row_lock {
+        i += 1;
+    }
+
+    // Read row digits
+    let row_start = i;
+    let mut row_num: u32 = 0;
+    while i < len && bytes[i].is_ascii_digit() {
+        row_num = row_num * 10 + (bytes[i] - b'0') as u32;
+        i += 1;
+    }
+
+    let (row, row_lock_flag) = if i > row_start {
+        (Some(row_num), Some(row_lock))
+    } else {
+        (None, None)
+    };
+
+    (col, row, col_lock_flag, row_lock_flag)
 }
 
 /// Converts a column index and row index into an Excel-style coordinate string.

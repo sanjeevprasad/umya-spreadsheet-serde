@@ -45,6 +45,7 @@ pub(crate) fn read(
     let mut reader = Reader::from_reader(data);
     reader.config_mut().trim_text(true);
     let mut formula_shared_list: HashMap<u32, (String, Vec<FormulaToken>)> = HashMap::new();
+    worksheet.cells_crate_mut().reserve(65536);
     xml_read_loop!(
         reader,
         Event::Start(ref e) => match e.name().local_name().into_inner() {
@@ -230,6 +231,8 @@ pub(crate) fn read(
         Event::Eof => break,
     );
 
+    worksheet.cells_crate_mut().build_indexes();
+
     Ok(())
 }
 
@@ -243,6 +246,7 @@ pub(crate) fn read_lite(
     reader.config_mut().trim_text(true);
 
     let mut cells = Cells::default();
+    cells.reserve(65536);
     let mut formula_shared_list: HashMap<u32, (String, Vec<FormulaToken>)> = HashMap::new();
     xml_read_loop!(
         reader,
@@ -277,6 +281,7 @@ pub(crate) fn read_lite(
         Event::Eof => break,
     );
 
+    cells.build_indexes();
     cells
 }
 

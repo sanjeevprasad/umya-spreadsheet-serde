@@ -2635,6 +2635,11 @@ impl Worksheet {
     }
 
     #[inline]
+    pub(crate) fn take_raw_data_of_worksheet(&mut self) -> Option<RawWorksheet> {
+        self.raw_data_of_worksheet.take()
+    }
+
+    #[inline]
     pub(crate) fn remove_raw_data_of_worksheet(&mut self) -> &mut Self {
         self.raw_data_of_worksheet = None;
         self

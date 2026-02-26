@@ -137,11 +137,10 @@ pub(crate) fn raw_to_deserialize_by_worksheet(
     shared_string_table: &RwLock<SharedStringTable>,
     stylesheet: &Stylesheet,
 ) {
-    if worksheet.is_deserialized() {
-        return;
-    }
-
-    let raw_data_of_worksheet = worksheet.raw_data_of_worksheet().clone();
+    let raw_data_of_worksheet = match worksheet.take_raw_data_of_worksheet() {
+        Some(v) => v,
+        None => return,
+    };
     let shared_string_table = &*shared_string_table.read().unwrap();
     worksheet::read(
         worksheet,
@@ -196,6 +195,4 @@ pub(crate) fn raw_to_deserialize_by_worksheet(
             }
         }
     }
-
-    worksheet.remove_raw_data_of_worksheet();
 }
