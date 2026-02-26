@@ -196,8 +196,8 @@ where
     let mut i = 0;
 
     // Optional '$' before column
-    let col_lock = i < len && bytes[i] == b'$';
-    if col_lock {
+    let first_dollar = i < len && bytes[i] == b'$';
+    if first_dollar {
         i += 1;
     }
 
@@ -207,18 +207,22 @@ where
         i += 1;
     }
 
-    let (col, col_lock_flag) = if i > col_start {
+    let (col, col_lock_flag, _) = if i > col_start {
         let mut col_num: u32 = 0;
         for &b in &bytes[col_start..i] {
             let ch = b.to_ascii_uppercase();
             col_num = col_num * 26 + (ch - b'A') as u32 + 1;
         }
-        (Some(col_num), Some(col_lock))
+        (Some(col_num), Some(first_dollar), true)
     } else {
-        (None, None)
+        // No column found — backtrack: the '$' belongs to the row
+        if first_dollar {
+            i -= 1;
+        }
+        (None, None, false)
     };
 
-    // Optional '$' before row
+    // Optional '$' before row (only consume if we had a column, or it's the first '$')
     let row_lock = i < len && bytes[i] == b'$';
     if row_lock {
         i += 1;

@@ -220,21 +220,29 @@ impl Row {
         formula_shared_list: &mut HashMap<u32, (String, Vec<FormulaToken>)>,
         empty_flag: bool,
     ) {
-        set_string_from_xml!(self, e, row_num, "r");
-        set_string_from_xml!(self, e, height, "ht");
-        set_string_from_xml!(self, e, thick_bot, "thickBot");
-        set_string_from_xml!(self, e, custom_height, "customHeight");
-        set_string_from_xml!(self, e, hidden, "hidden");
-
-        if let Some(v) = get_attribute(e, b"dyDescent") {
-            if !v.is_empty() {
-                self.descent.set_value_string(v);
+        for attr in e.attributes().with_checks(false).flatten() {
+            let val = || String::from_utf8(attr.value.to_vec()).unwrap_or_default();
+            match attr.key.local_name().into_inner() {
+                b"r" => { self.row_num.set_value_string(val()); }
+                b"ht" => { self.height.set_value_string(val()); }
+                b"thickBot" => { self.thick_bot.set_value_string(val()); }
+                b"customHeight" => { self.custom_height.set_value_string(val()); }
+                b"hidden" => { self.hidden.set_value_string(val()); }
+                b"dyDescent" => {
+                    let v = val();
+                    if !v.is_empty() {
+                        self.descent.set_value_string(v);
+                    }
+                }
+                b"s" => {
+                    if let Ok(s) = std::str::from_utf8(&attr.value) {
+                        if let Ok(idx) = s.parse::<usize>() {
+                            self.set_style(stylesheet.style(idx));
+                        }
+                    }
+                }
+                _ => {}
             }
-        }
-
-        if let Some(v) = get_attribute(e, b"s") {
-            let style = stylesheet.style(v.parse::<usize>().unwrap());
-            self.set_style(style);
         }
 
         if empty_flag {

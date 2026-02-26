@@ -285,16 +285,22 @@ impl CellFormula {
         cell_reference_str: &str,
         formula_shared_list: &mut HashMap<u32, (String, Vec<FormulaToken>)>,
     ) {
-        set_string_from_xml!(self, e, bx, "bx");
-        set_string_from_xml!(self, e, data_table_2d, "dt2D");
-        set_string_from_xml!(self, e, data_table_row, "dtr");
-        set_string_from_xml!(self, e, formula_type, "t");
-        set_string_from_xml!(self, e, input_1deleted, "del1");
-        set_string_from_xml!(self, e, input_2deleted, "del2");
-        set_string_from_xml!(self, e, r1, "r1");
-        set_string_from_xml!(self, e, r2, "r2");
-        set_string_from_xml!(self, e, reference, "ref");
-        set_string_from_xml!(self, e, shared_index, "si");
+        for attr in e.attributes().with_checks(false).flatten() {
+            let val = || String::from_utf8(attr.value.to_vec()).unwrap_or_default();
+            match attr.key.local_name().into_inner() {
+                b"bx" => { self.bx.set_value_string(val()); }
+                b"dt2D" => { self.data_table_2d.set_value_string(val()); }
+                b"dtr" => { self.data_table_row.set_value_string(val()); }
+                b"t" => { self.formula_type.set_value_string(val()); }
+                b"del1" => { self.input_1deleted.set_value_string(val()); }
+                b"del2" => { self.input_2deleted.set_value_string(val()); }
+                b"r1" => { self.r1.set_value_string(val()); }
+                b"r2" => { self.r2.set_value_string(val()); }
+                b"ref" => { self.reference.set_value_string(val()); }
+                b"si" => { self.shared_index.set_value_string(val()); }
+                _ => {}
+            }
+        }
 
         if !is_empty {
             xml_read_loop!(
